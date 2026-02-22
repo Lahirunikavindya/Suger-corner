@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${product.name} + ' - Sugar Corner'">Product - Sugar Corner</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a th:href="@{/}" class="logo">Sugar Corner</a>
+            <nav class="nav">
+                <a th:href="@{/}">Home</a>
+                <a th:href="@{/products}">Products</a>
+                <a th:href="@{/cart}">Cart</a>
+                <div sec:authorize="isAuthenticated()">
+                    <a th:href="@{/orders}">My Orders</a>
+                    <a th:href="@{/profile}">Profile</a>
+                    <form th:action="@{/logout}" method="post" class="inline-form">
+                        <button type="submit">Logout</button>
+                    </form>
+                </div>
+                <div sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/login}">Login</a>
+                    <a th:href="@{/auth/register}">Register</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <a th:href="@{/products}" class="back-link">&larr; Back to Products</a>
+            <div class="product-detail">
+                <img th:src="${(product.imageUrl != null and !product.imageUrl.isEmpty()) ? product.imageUrl : '/images/placeholder.svg'}" alt="Product" class="product-img-large">
+                <div class="product-info">
+                    <h1 th:text="${product.name}">Product Name</h1>
+                    <p th:text="${product.description}" class="product-desc">Description</p>
+                    <p class="price" th:text="'$' + ${product.price}">$0.00</p>
+                    <p>In Stock: <span th:text="${product.stockQuantity}">0</span></p>
+                    <form sec:authorize="isAuthenticated()" th:action="@{/cart/add}" method="post" class="inline-form">
+                        <input type="hidden" name="productId" th:value="${product.id}">
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="btn btn-primary">Add to Cart</button>
+                    </form>
+                    <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="btn btn-primary">Login to Order</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Sugar Corner</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Payments - Sugar Corner Admin</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a th:href="@{/}" class="logo">Sugar Corner</a>
+            <nav class="nav admin-nav">
+                <a th:href="@{/admin/products}">Products</a>
+                <a th:href="@{/admin/orders}">Orders</a>
+                <a th:href="@{/admin/payments}">Payments</a>
+                <a th:href="@{/admin/feedback}">Feedback</a>
+                <a th:href="@{/}">Store</a>
+                <form th:action="@{/logout}" method="post" class="inline-form">
+                    <button type="submit">Logout</button>
+                </form>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            <h1>Manage Payments</h1>
+            <form th:action="@{/admin/payments}" method="get" class="filter-form">
+                <select name="status">
+                    <option value="">All</option>
+                    <option th:each="s : ${T(com.sugarcorner.model.entity.Payment$PaymentStatus).values()}"
+                            th:value="${s}" th:text="${s}"
+                            th:selected="${s == statusFilter}"></option>
+                </select>
+                <button type="submit" class="btn btn-secondary">Filter</button>
+            </form>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Order</th>
+                        <th>Amount</th>
+                        <th>Method</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="payment : ${payments}">
+                        <td th:text="${payment.id}">1</td>
+                        <td th:text="${payment.order.orderNumber}">SC-123</td>
+                        <td th:text="${'$' + payment.amount}">$0.00</td>
+                        <td th:text="${payment.method}">COD</td>
+                        <td><span class="badge" th:text="${payment.status}"></span></td>
+                        <td>
+                            <form th:if="${payment.status.name() == 'PENDING'}"
+                                  th:action="@{/admin/payments/{id}/mark-paid(id=${payment.id})}" method="post" class="inline-form">
+                                <button type="submit" class="btn btn-sm btn-primary">Mark Paid</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Sugar Corner Admin</p>
+        </div>
+    </footer>
+</body>
+</html>

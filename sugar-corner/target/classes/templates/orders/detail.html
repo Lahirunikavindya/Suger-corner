@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Order ' + ${order.orderNumber} + ' - Sugar Corner'">Order - Sugar Corner</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a th:href="@{/}" class="logo">Sugar Corner</a>
+            <nav class="nav">
+                <a th:href="@{/}">Home</a>
+                <a th:href="@{/products}">Products</a>
+                <a th:href="@{/orders}">My Orders</a>
+                <a th:href="@{/profile}">Profile</a>
+                <form th:action="@{/logout}" method="post" class="inline-form">
+                    <button type="submit">Logout</button>
+                </form>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <a th:href="@{/orders}" class="back-link">&larr; Back to Orders</a>
+            <h1>Order <span th:text="${order.orderNumber}">SC-123</span></h1>
+            <p>Date: <span th:text="${#temporals.format(order.createdAt, 'yyyy-MM-dd HH:mm')}"></span></p>
+            <p>Status: <span class="badge" th:text="${order.status}"></span></p>
+            <p>Delivery Address: <span th:text="${order.deliveryAddress}"></span></p>
+            <p th:if="${order.notes}">Notes: <span th:text="${order.notes}"></span></p>
+
+            <h2>Order Items</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Unit Price</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="item : ${order.orderItems}">
+                        <td th:text="${item.product.name}">Product</td>
+                        <td th:text="${item.quantity}">1</td>
+                        <td th:text="${'$' + item.unitPrice}">$0.00</td>
+                        <td th:text="${'$' + item.subtotal}">$0.00</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="total"><strong>Total: <span th:text="${'$' + order.totalAmount}">$0.00</span></strong></p>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Sugar Corner</p>
+        </div>
+    </footer>
+</body>
+</html>
