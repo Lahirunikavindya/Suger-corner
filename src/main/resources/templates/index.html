@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<!--
+  ================================================================
+  FILE:  index.html
+  PLACE: src/main/resources/templates/index.html
+
+  VIDEO FILE SETUP (IMPORTANT):
+  1. Copy your video file to:
+       src/main/resources/static/videos/bg-video.mp4
+     (Create the "videos" folder if it does not exist)
+  2. The Spring Boot static handler will then serve it at:
+
+
+  3. The <video> tag below references it as "/videos/bg-video.mp4"
+
+  WHAT CHANGED vs original:
+  - Added full-screen background video behind the page
+  - Added dark overlay so text stays readable over the video
+  - Text colours lightened slightly for better contrast on dark bg
+  - All buttons, links, routes are IDENTICAL — nothing functional changed
+  ================================================================
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Sugar Corner – Artisan Brownie Shop</title>
+
+    <!-- Google Fonts — same as original -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+
+    <style>
+        /* ── Design tokens (unchanged) ──────────────────────── */
+        :root {
+            --brown-dark:  #2C1810;
+            --brown-mid:   #5C3317;
+            --brown-warm: #8b4513;
+            --caramel: #c68642;
+            --cream:       #FDF6EC;
+            --white:       #FFFEF9;
+        }
+
+        /* ── Reset (unchanged) ───────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        /* ── Body — position:relative so the video sits behind ─ */
+        body {
+            font-family: 'DM Sans', sans-serif;
+            /* Background colour shows while video loads / on mobile */
+            background: var(--brown-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+            /* Needed so ::before overlay covers the whole viewport */
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ============================================================
+           BACKGROUND VIDEO
+           The <video> element is fixed to cover the entire viewport.
+           z-index: -2 puts it behind everything.
+           object-fit: cover ensures it fills the screen without
+           distorting, cropping as needed (same as background-size:cover).
+           ============================================================ */
+        #bg-video {
+            position: fixed;      /* fixed = stays in place when page scrolls */
+            top:    0;
+            left:   0;
+            width:  100%;
+            height: 100%;
+            object-fit: cover;    /* fill screen, crop edges if needed */
+            z-index: -2;          /* behind everything */
+            pointer-events: none; /* clicks pass through to page elements */
+        }
+
+        /* ============================================================
+           DARK OVERLAY
+           A semi-transparent dark layer on top of the video so the
+           text and buttons remain readable.
+           Adjust the rgba alpha (currently 0.62) to taste:
+             0.4 = lighter / more video visible
+             0.75 = darker / more text contrast
+           ============================================================ */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;             /* covers top/right/bottom/left = 0 */
+            background: rgba(20, 8, 4, 0.62); /* very dark brown-black */
+            z-index: -1;          /* above video, below page content */
+            pointer-events: none;
+        }
+
+        /* ============================================================
+           HERO CARD — same animation as original
+           Glass-morphism card gives content a clean backdrop
+           ============================================================ */
+        .hero {
+            max-width: 600px;
+            animation: fadeUp .8s ease both;
+            /* Subtle frosted-glass card so content pops on the video */
+            background: rgba(20, 8, 4, 0.45);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border: 1px solid rgba(198, 134, 66, 0.25);
+            border-radius: 24px;
+            padding: 56px 48px 44px;
+        }
+
+        /* Fade-up animation (unchanged) */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0);    }
+        }
+
+        /* ── Logo emoji (unchanged animation) ───────────────── */
+        .logo {
+            font-size: 80px;
+            display: block;
+            margin-bottom: 20px;
+            animation: bounceIn 1s ease both .3s;
+        }
+        @keyframes bounceIn {
+            0%   { transform: scale(0);   opacity: 0; }
+            60%  { transform: scale(1.1);             }
+            100% { transform: scale(1);   opacity: 1; }
+        }
+
+        /* ── Heading — lightened for dark background ─────────── */
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            /* Changed: cream instead of brown-dark for visibility on video */
+            color: var(--cream);
+            line-height: 1.1;
+            margin-bottom: 10px;
+        }
+        h1 em {
+            font-style: italic;
+            color: var(--caramel); /* unchanged */
+        }
+
+        /* ── Paragraph — lightened for visibility ─────────────── */
+        p {
+            /* Changed: softer cream instead of brown-mid */
+            color: rgba(253, 246, 236, 0.82);
+            font-size: 1.05rem;
+            font-weight: 300;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        /* ── Button row (unchanged layout) ──────────────────── */
+        .btn-row {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* ── Base button styles (unchanged) ─────────────────── */
+        .btn {
+            padding: 14px 36px;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: .95rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all .25s;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* Primary button — unchanged gradient and hover */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--brown-warm), var(--brown-mid));
+            color: var(--cream);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(92, 51, 23, .35);
+        }
+
+        /* Outline button — unchanged */
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--caramel);
+            color: var(--caramel); /* lightened from brown-warm for contrast on dark bg */
+        }
+        .btn-outline:hover {
+            background: var(--caramel);
+            color: var(--white);
+        }
+
+        /* ── Tagline (admin link) — lightened slightly ─────────── */
+        .tagline {
+            margin-top: 40px;
+            font-size: .8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            /* Lightened from caramel to a brighter gold for visibility */
+            color: rgba(198, 134, 66, 0.85);
+        }
+
+        /* ── Mobile: hide video on very small screens (performance) */
+        @media (max-width: 480px) {
+            .hero { padding: 36px 24px 32px; }
+            h1    { font-size: 2.2rem; }
+        }
+        #bg-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+
+            object-fit: cover;
+
+            z-index: -2;
+            pointer-events: none;
+
+            /* performance boost */
+            transform: translateZ(0);
+            will-change: transform;
+
+            min-width: 100%;
+            min-height: 100%;
+        }
+
+        .hero {
+            position: relative;
+            z-index: 2;
+        }
+
+
+    </style>
+</head>
+<body>
+
+<!--
+    BACKGROUND VIDEO
+    ────────────────────────────────────────────────────────────
+    src="/videos/bg-video.mp4"
+      → Spring Boot serves this from:
+        src/main/resources/static/videos/bg-video.mp4
+
+    autoplay  — starts playing immediately (required for bg video)
+    muted     — REQUIRED for autoplay to work in all browsers
+    loop      — loops continuously so the background never goes blank
+    playsinline — required on iOS so it plays inline instead of fullscreen
+    preload="auto" — browser preloads the video for smooth start
+    ────────────────────────────────────────────────────────────
+-->
+<video id="bg-video"
+       src="/videos/bg-video.mp4"
+       autoplay
+       muted
+       loop
+       playsinline
+       preload="auto"
+       aria-hidden="true">
+    <!-- Fallback: if browser can't play the video, nothing broken -->
+</video>
+
+
+<!-- ============================================================
+     HERO CONTENT — 100% identical to original, no logic changed
+     ============================================================ -->
+<div class="hero">
+    <span class="logo">🍫</span>
+
+    <h1>Welcome to <em>Sugar Corner</em></h1>
+
+    <p>Handcrafted brownies baked with love. Order online, pick up fresh,
+        or get them delivered right to your door.</p>
+
+    <!-- Buttons — routes unchanged: /login and /register -->
+    <div class="btn-row">
+        <a href="/login"    class="btn btn-primary">Customer Login</a>
+        <a href="/register" class="btn btn-outline">Create Account</a>
+    </div>
+
+    <!-- Admin link — route unchanged: /admin/login -->
+    <div class="tagline">
+        ✦ Admin access:
+        <a href="/admin/login" style="color:inherit;">Admin Login</a>
+        ✦
+    </div>
+</div>
+
+</body>
+</html>
