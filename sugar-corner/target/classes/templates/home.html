@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sugar Corner – Where Every Bite is Happiness</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="home-page">
+    <!-- Navigation Bar -->
+    <header class="welcome-nav">
+        <div class="nav-container">
+            <a th:href="@{/}" class="nav-logo">Sugar Corner 🍰</a>
+            <nav class="nav-links">
+                <a th:href="@{/}">Home</a>
+                <a th:href="@{/products}">Shop</a>
+                <a th:href="@{/about}">About Us</a>
+                <a th:href="@{/contact}">Contact</a>
+                <div sec:authorize="isAuthenticated()">
+                    <a th:href="@{/orders}">My Orders</a>
+                    <a th:href="@{/profile}">Profile</a>
+                    <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/products}">Admin</a>
+                    <form th:action="@{/logout}" method="post" class="nav-form">
+                        <button type="submit" class="nav-btn">Logout</button>
+                    </form>
+                </div>
+                <div sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/login}" class="nav-login">Login</a>
+                    <a th:href="@{/auth/register}" class="nav-register">Register</a>
+                </div>
+            </nav>
+            <button class="nav-toggle" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+        <!-- Hero Section -->
+        <section class="hero-welcome">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <h1 class="hero-headline">Welcome to Sugar Corner – Where Every Bite is Happiness 🍫</h1>
+                <p class="hero-subheading">Freshly baked brownies delivered to your doorstep.</p>
+                <div class="hero-buttons">
+                    <a th:href="@{/products}" class="btn-hero btn-order">Order Now</a>
+                    <a th:href="@{/products}" class="btn-hero btn-explore">Explore Menu</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features-welcome">
+            <div class="container">
+                <div class="features-grid">
+                    <div class="feature-card-welcome">
+                        <div class="feature-icon">🥬</div>
+                        <h3>Fresh Ingredients</h3>
+                        <p>We use only the finest, freshest ingredients for every batch of brownies.</p>
+                    </div>
+                    <div class="feature-card-welcome">
+                        <div class="feature-icon">🚚</div>
+                        <h3>Fast Delivery</h3>
+                        <p>Quick and reliable delivery so your brownies arrive fresh and delicious.</p>
+                    </div>
+                    <div class="feature-card-welcome">
+                        <div class="feature-icon">🔒</div>
+                        <h3>Secure Payments</h3>
+                        <p>Safe and hassle-free cash on delivery. Pay when you receive your order.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Brownies Section -->
+        <section class="featured-section">
+            <div class="container">
+                <h2 class="section-title">Featured & Popular Brownies</h2>
+                <div class="featured-grid" th:if="${!featuredProducts.isEmpty()}">
+                    <div class="featured-card" th:each="product : ${featuredProducts}">
+                        <div class="featured-img-wrap">
+                            <img th:src="${(product.imageUrl != null and !product.imageUrl.isEmpty()) ? product.imageUrl : '/images/placeholder.svg'}" alt="Brownie" class="featured-img">
+                        </div>
+                        <h3 th:text="${product.name}">Brownie Name</h3>
+                        <p class="featured-price" th:text="${'$' + product.price}">$0.00</p>
+                        <a th:href="@{/products/{id}(id=${product.id})}" class="btn-featured">Order Now</a>
+                    </div>
+                </div>
+                <div class="featured-empty" th:if="${featuredProducts.isEmpty()}">
+                    <p>Our brownies are baking! Check back soon.</p>
+                    <a th:href="@{/products}" class="btn-hero btn-order">View All Products</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Customer Trust Section -->
+        <section class="trust-section">
+            <div class="container">
+                <div class="trust-content">
+                    <blockquote class="testimonial">
+                        "The best brownies I've ever tasted! So rich and chocolatey. Sugar Corner never disappoints!"
+                        <cite>— Sarah M., Happy Customer</cite>
+                    </blockquote>
+                    <div class="trust-badge">
+                        <span class="trust-number">1000+</span>
+                        <span class="trust-label">Happy Customers</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="welcome-footer">
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-col">
+                        <h4>Contact Us</h4>
+                        <p>📞 +1 (555) 123-4567</p>
+                        <p>✉️ hello@sugarcorner.com</p>
+                        <p>📍 123 Sweet Street, Dessert City</p>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Follow Us</h4>
+                        <div class="social-icons">
+                            <a href="#" aria-label="Facebook">📘</a>
+                            <a href="#" aria-label="Instagram">📷</a>
+                            <a href="#" aria-label="Twitter">🐦</a>
+                        </div>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Stay Sweet</h4>
+                        <p>Get updates on new flavors and special offers!</p>
+                        <form class="newsletter-form" action="#" method="post">
+                            <input type="email" placeholder="Your email" required>
+                            <button type="submit">Subscribe</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 Sugar Corner. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script th:src="@{/js/app.js}"></script>
+    <script th:inline="javascript">
+        document.querySelector('.nav-toggle')?.addEventListener('click', function() {
+            document.querySelector('.nav-links').classList.toggle('open');
+        });
+    </script>
+</body>
+</html>

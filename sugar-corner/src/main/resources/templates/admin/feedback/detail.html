@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback #<span th:text="${feedback.id}"></span> - Sugar Corner Admin</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a th:href="@{/}" class="logo">Sugar Corner</a>
+            <nav class="nav admin-nav">
+                <a th:href="@{/admin/products}">Products</a>
+                <a th:href="@{/admin/orders}">Orders</a>
+                <a th:href="@{/admin/payments}">Payments</a>
+                <a th:href="@{/admin/feedback}">Feedback</a>
+                <a th:href="@{/}">Store</a>
+                <form th:action="@{/logout}" method="post" class="inline-form">
+                    <button type="submit">Logout</button>
+                </form>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            <a th:href="@{/admin/feedback}" class="back-link">&larr; Back to Feedback</a>
+            <h1>Feedback #<span th:text="${feedback.id}"></span></h1>
+            <p>From: <span th:text="${feedback.customer.fullName}"></span> (<span th:text="${feedback.customer.email}"></span>)</p>
+            <p>Submitted: <span th:text="${#temporals.format(feedback.submittedAt, 'yyyy-MM-dd HH:mm')}"></span></p>
+            <p>Status: <span class="badge" th:text="${feedback.status}"></span></p>
+            <h2>Subject</h2>
+            <p th:text="${feedback.subject}">Subject</p>
+            <h2>Message</h2>
+            <p th:text="${feedback.message}">Message</p>
+            <div th:if="${feedback.adminResponse}">
+                <h2>Admin Response</h2>
+                <p th:text="${feedback.adminResponse}">Response</p>
+            </div>
+            <form th:action="@{/admin/feedback/{id}/respond(id=${feedback.id})}" method="post" class="form">
+                <div class="form-group">
+                    <label for="adminResponse">Respond to Customer</label>
+                    <textarea id="adminResponse" name="adminResponse" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Response</button>
+            </form>
+            <form th:action="@{/admin/feedback/{id}/status(id=${feedback.id})}" method="post" class="status-form">
+                <label for="status">Update Status:</label>
+                <select name="status" id="status">
+                    <option th:each="s : ${T(com.sugarcorner.model.entity.Feedback$MessageStatus).values()}"
+                            th:value="${s}" th:text="${s}"
+                            th:selected="${s == feedback.status}"></option>
+                </select>
+                <button type="submit" class="btn btn-secondary">Update Status</button>
+            </form>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Sugar Corner Admin</p>
+        </div>
+    </footer>
+</body>
+</html>
